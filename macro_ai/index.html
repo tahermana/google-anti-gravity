@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MacroAI — Smart Nutrition Tracker</title>
+  <meta name="description" content="MacroAI is an intelligent nutrition and fitness tracking app. Log meals, track macros, and get AI-powered suggestions to hit your goals." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- App Shell -->
+  <div class="app-shell">
+
+    <!-- ===== HOME PAGE ===== -->
+    <div class="page active" id="page-home">
+
+      <!-- Header -->
+      <header class="header">
+        <div class="header-left">
+          <p class="greeting" id="greeting-text">Good morning,</p>
+          <h1 class="user-name">Ahmed <span class="wave">👋</span></h1>
+        </div>
+        <div class="avatar" id="btn-profile-nav">AM</div>
+      </header>
+
+      <!-- Scrollable Content -->
+      <div class="scroll-content">
+
+        <!-- Calorie Card -->
+        <div class="card calorie-card">
+          <div class="ring-wrapper">
+            <svg class="ring-svg" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+              <circle class="ring-bg" cx="60" cy="60" r="50" />
+              <circle class="ring-goal" cx="60" cy="60" r="50" id="ring-goal-arc" />
+              <circle class="ring-eaten" cx="60" cy="60" r="50" id="ring-eaten-arc" />
+              <circle class="ring-burned" cx="60" cy="60" r="50" id="ring-burned-arc" />
+            </svg>
+            <div class="ring-center">
+              <span class="ring-num" id="kcal-left">840</span>
+              <span class="ring-label">KCAL LEFT</span>
+            </div>
+          </div>
+          <div class="calorie-legend">
+            <div class="legend-item">
+              <span class="dot dot-goal"></span>
+              <span class="legend-name">Goal</span>
+              <span class="legend-val" id="val-goal">2,000</span>
+            </div>
+            <div class="legend-item">
+              <span class="dot dot-eaten"></span>
+              <span class="legend-name">Eaten</span>
+              <span class="legend-val" id="val-eaten">1,160</span>
+            </div>
+            <div class="legend-item">
+              <span class="dot dot-burned"></span>
+              <span class="legend-name">Burned</span>
+              <span class="legend-val" id="val-burned">320</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Macros Row -->
+        <div class="macros-row">
+          <div class="macro-card" data-macro="protein">
+            <div class="macro-top">
+              <span class="macro-val" id="m-protein">82g</span>
+            </div>
+            <span class="macro-name">PROTEIN</span>
+            <div class="macro-bar-track">
+              <div class="macro-bar protein-bar" style="width:55%"></div>
+            </div>
+          </div>
+          <div class="macro-card" data-macro="carbs">
+            <div class="macro-top">
+              <span class="macro-val" id="m-carbs">145g</span>
+            </div>
+            <span class="macro-name">CARBS</span>
+            <div class="macro-bar-track">
+              <div class="macro-bar carbs-bar" style="width:73%"></div>
+            </div>
+          </div>
+          <div class="macro-card" data-macro="fat">
+            <div class="macro-top">
+              <span class="macro-val" id="m-fat">38g</span>
+            </div>
+            <span class="macro-name">FAT</span>
+            <div class="macro-bar-track">
+              <div class="macro-bar fat-bar" style="width:46%"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="stats-row">
+          <div class="stat-card">
+            <span class="stat-icon">💧</span>
+            <div>
+              <span class="stat-val">1.2L</span>
+              <span class="stat-name">WATER</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">⚡</span>
+            <div>
+              <span class="stat-val">320</span>
+              <span class="stat-name">BURNED</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">🔥</span>
+            <div>
+              <span class="stat-val">7,241</span>
+              <span class="stat-name">STEPS</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Tip -->
+        <div class="ai-tip">
+          <span class="ai-dot"></span>
+          <p><strong>45g short on protein</strong> — add chicken or Greek yogurt to hit your goal.</p>
+        </div>
+
+        <!-- Today's Meals -->
+        <div class="meals-section">
+          <div class="meals-header">
+            <h2 class="section-title">TODAY'S MEALS</h2>
+            <button class="scan-btn" id="btn-scan">+ Scan food</button>
+          </div>
+
+          <div class="meals-list" id="meals-list">
+
+            <div class="meal-group">
+              <span class="meal-time-label">🌅 Breakfast</span>
+              <div class="meal-item" data-meal="0">
+                <div class="meal-icon" style="background: #1a3a6b;">🥣</div>
+                <div class="meal-info">
+                  <p class="meal-name">Oatmeal with banana</p>
+                  <p class="meal-meta">Breakfast · 8:15 AM</p>
+                </div>
+                <span class="meal-kcal">380 kcal</span>
+              </div>
+              <div class="meal-item" data-meal="1">
+                <div class="meal-icon" style="background: #2a1a1a;">☕</div>
+                <div class="meal-info">
+                  <p class="meal-name">Black coffee</p>
+                  <p class="meal-meta">Breakfast · 8:30 AM</p>
+                </div>
+                <span class="meal-kcal">5 kcal</span>
+              </div>
+            </div>
+
+            <div class="meal-group">
+              <span class="meal-time-label">☀️ Lunch</span>
+              <div class="meal-item" data-meal="2">
+                <div class="meal-icon" style="background: #1a3a1a;">🥗</div>
+                <div class="meal-info">
+                  <p class="meal-name">Grilled chicken salad</p>
+                  <p class="meal-meta">Lunch · 1:00 PM</p>
+                </div>
+                <span class="meal-kcal">420 kcal</span>
+              </div>
+              <div class="meal-item" data-meal="3">
+                <div class="meal-icon" style="background: #3a2a1a;">🍞</div>
+                <div class="meal-info">
+                  <p class="meal-name">Whole grain bread</p>
+                  <p class="meal-meta">Lunch · 1:05 PM</p>
+                </div>
+                <span class="meal-kcal">180 kcal</span>
+              </div>
+            </div>
+
+            <div class="meal-group">
+              <span class="meal-time-label">🍎 Snack</span>
+              <div class="meal-item" data-meal="4">
+                <div class="meal-icon" style="background: #3a1a1a;">🥜</div>
+                <div class="meal-info">
+                  <p class="meal-name">Mixed nuts</p>
+                  <p class="meal-meta">Snack · 3:30 PM</p>
+                </div>
+                <span class="meal-kcal">175 kcal</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Add meal button -->
+          <button class="add-meal-btn" id="btn-add-meal">
+            <span>+</span> Log a meal
+          </button>
+        </div>
+
+      </div><!-- end scroll-content -->
+    </div><!-- end page-home -->
+
+    <!-- ===== LOG PAGE ===== -->
+    <div class="page" id="page-log">
+      <header class="header">
+        <h2 class="page-title">Meal Log</h2>
+      </header>
+      <div class="scroll-content">
+        <div class="log-calendar">
+          <div class="cal-days" id="cal-days"></div>
+        </div>
+        <div class="log-summary-card">
+          <div class="log-sum-row">
+            <span>Calories consumed</span><strong>1,160 kcal</strong>
+          </div>
+          <div class="log-sum-row">
+            <span>Calories burned</span><strong class="burned-text">320 kcal</strong>
+          </div>
+          <div class="log-sum-row">
+            <span>Net calories</span><strong>840 kcal</strong>
+          </div>
+        </div>
+        <h3 class="sub-section-title">Weekly Trend</h3>
+        <div class="chart-container">
+          <canvas id="weekly-chart"></canvas>
+        </div>
+        <h3 class="sub-section-title">Macro Breakdown</h3>
+        <div class="macro-pie-container">
+          <canvas id="macro-pie"></canvas>
+          <div class="pie-legend">
+            <div class="pie-leg-item"><span style="background:#e63946"></span>Protein 30%</div>
+            <div class="pie-leg-item"><span style="background:#f4a261"></span>Carbs 53%</div>
+            <div class="pie-leg-item"><span style="background:#e9c46a"></span>Fat 17%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SCAN PAGE ===== -->
+    <div class="page" id="page-scan">
+      <header class="header">
+        <h2 class="page-title">Scan Food</h2>
+      </header>
+      <div class="scroll-content center-content">
+        <div class="scan-viewfinder">
+          <div class="scan-corner tl"></div>
+          <div class="scan-corner tr"></div>
+          <div class="scan-corner bl"></div>
+          <div class="scan-corner br"></div>
+          <div class="scan-line" id="scan-line"></div>
+          <p class="scan-hint">Point camera at food or barcode</p>
+        </div>
+        <div class="scan-actions">
+          <button class="scan-action-btn" id="btn-manual-search">
+            <span>🔍</span> Search manually
+          </button>
+          <button class="scan-action-btn primary" id="btn-fake-scan">
+            <span>📷</span> Scan now
+          </button>
+        </div>
+        <!-- Scan result (hidden by default) -->
+        <div class="scan-result hidden" id="scan-result">
+          <div class="scan-result-header">
+            <span class="scan-result-icon">🍗</span>
+            <div>
+              <p class="scan-result-name">Grilled Chicken Breast</p>
+              <p class="scan-result-serving">100g serving</p>
+            </div>
+          </div>
+          <div class="scan-result-macros">
+            <div class="sr-macro"><span>165</span><small>kcal</small></div>
+            <div class="sr-macro"><span>31g</span><small>protein</small></div>
+            <div class="sr-macro"><span>0g</span><small>carbs</small></div>
+            <div class="sr-macro"><span>3.6g</span><small>fat</small></div>
+          </div>
+          <button class="add-food-btn" id="btn-add-scanned">Add to Log</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== STATS PAGE ===== -->
+    <div class="page" id="page-stats">
+      <header class="header">
+        <h2 class="page-title">Stats</h2>
+      </header>
+      <div class="scroll-content">
+        <div class="stats-grid">
+          <div class="stats-big-card">
+            <p class="stats-big-label">Avg. daily calories</p>
+            <p class="stats-big-val">1,847</p>
+            <p class="stats-big-sub">↓ 153 under goal</p>
+          </div>
+          <div class="stats-big-card accent">
+            <p class="stats-big-label">Streak</p>
+            <p class="stats-big-val">🔥 12</p>
+            <p class="stats-big-sub">days logged</p>
+          </div>
+        </div>
+        <h3 class="sub-section-title">Body Weight</h3>
+        <div class="chart-container">
+          <canvas id="weight-chart"></canvas>
+        </div>
+        <h3 class="sub-section-title">Nutrient Goals</h3>
+        <div class="nutrient-goals">
+          <div class="nutrient-row">
+            <span>Protein</span>
+            <div class="n-bar-track"><div class="n-bar" style="width:55%;background:#e63946"></div></div>
+            <span>82/150g</span>
+          </div>
+          <div class="nutrient-row">
+            <span>Carbs</span>
+            <div class="n-bar-track"><div class="n-bar" style="width:73%;background:#f4a261"></div></div>
+            <span>145/200g</span>
+          </div>
+          <div class="nutrient-row">
+            <span>Fat</span>
+            <div class="n-bar-track"><div class="n-bar" style="width:46%;background:#e9c46a"></div></div>
+            <span>38/83g</span>
+          </div>
+          <div class="nutrient-row">
+            <span>Fiber</span>
+            <div class="n-bar-track"><div class="n-bar" style="width:60%;background:#2a9d8f"></div></div>
+            <span>18/30g</span>
+          </div>
+          <div class="nutrient-row">
+            <span>Water</span>
+            <div class="n-bar-track"><div class="n-bar" style="width:48%;background:#3a86ff"></div></div>
+            <span>1.2/2.5L</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PROFILE PAGE ===== -->
+    <div class="page" id="page-profile">
+      <header class="header">
+        <h2 class="page-title">Profile</h2>
+      </header>
+      <div class="scroll-content">
+        <div class="profile-hero">
+          <div class="profile-avatar-big">AM</div>
+          <h2 class="profile-name">Ahmed M.</h2>
+          <p class="profile-goal-tag">🎯 Weight Loss</p>
+        </div>
+        <div class="profile-stats-row">
+          <div class="p-stat"><span>78 kg</span><small>Weight</small></div>
+          <div class="p-stat"><span>175 cm</span><small>Height</small></div>
+          <div class="p-stat"><span>25.5</span><small>BMI</small></div>
+        </div>
+        <div class="profile-section">
+          <h3 class="profile-section-title">Daily Targets</h3>
+          <div class="profile-field">
+            <span>Calorie Goal</span><span class="field-val">2,000 kcal</span>
+          </div>
+          <div class="profile-field">
+            <span>Protein</span><span class="field-val">150g</span>
+          </div>
+          <div class="profile-field">
+            <span>Carbs</span><span class="field-val">200g</span>
+          </div>
+          <div class="profile-field">
+            <span>Fat</span><span class="field-val">83g</span>
+          </div>
+        </div>
+        <div class="profile-section">
+          <h3 class="profile-section-title">Settings</h3>
+          <div class="profile-toggle-row">
+            <span>Meal reminders</span>
+            <div class="toggle active" id="toggle-reminders"></div>
+          </div>
+          <div class="profile-toggle-row">
+            <span>AI suggestions</span>
+            <div class="toggle active" id="toggle-ai"></div>
+          </div>
+          <div class="profile-toggle-row">
+            <span>Dark mode</span>
+            <div class="toggle active" id="toggle-dark"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== BOTTOM NAV ===== -->
+    <nav class="bottom-nav">
+      <button class="nav-btn active" data-page="home" id="nav-home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+        <span>Home</span>
+      </button>
+      <button class="nav-btn" data-page="log" id="nav-log">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+          <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+          <line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+        <span>Log</span>
+      </button>
+      <button class="nav-btn nav-center" data-page="scan" id="nav-scan">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+          <circle cx="12" cy="13" r="4"/>
+        </svg>
+        <span>Scan</span>
+      </button>
+      <button class="nav-btn" data-page="stats" id="nav-stats">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="20" x2="18" y2="10"/>
+          <line x1="12" y1="20" x2="12" y2="4"/>
+          <line x1="6" y1="20" x2="6" y2="14"/>
+        </svg>
+        <span>Stats</span>
+      </button>
+      <button class="nav-btn" data-page="profile" id="nav-profile">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+        <span>Profile</span>
+      </button>
+    </nav>
+
+  </div><!-- end app-shell -->
+
+  <!-- Add Meal Modal -->
+  <div class="modal-overlay hidden" id="add-meal-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Log a Meal</h3>
+        <button class="modal-close" id="modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="text" class="modal-input" id="meal-name-input" placeholder="Food name (e.g. Grilled chicken)" />
+        <div class="modal-row">
+          <input type="number" class="modal-input half" id="meal-kcal-input" placeholder="Calories" />
+          <select class="modal-input half" id="meal-type-select">
+            <option value="Breakfast">Breakfast</option>
+            <option value="Lunch">Lunch</option>
+            <option value="Dinner">Dinner</option>
+            <option value="Snack">Snack</option>
+          </select>
+        </div>
+        <div class="modal-row">
+          <input type="number" class="modal-input third" id="meal-protein-input" placeholder="Protein g" />
+          <input type="number" class="modal-input third" id="meal-carbs-input" placeholder="Carbs g" />
+          <input type="number" class="modal-input third" id="meal-fat-input" placeholder="Fat g" />
+        </div>
+        <button class="modal-submit" id="modal-submit">Add Meal</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

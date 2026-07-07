@@ -6,6 +6,14 @@ class ProfileScreen extends StatelessWidget {
   final AppState state;
   const ProfileScreen({super.key, required this.state});
 
+  /// Format an integer with comma thousands-separator (e.g. 2400 → '2,400').
+  static String _formatNumber(int n) {
+    return n.toString().replaceAllMapped(
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (m) => '${m[1]},',
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

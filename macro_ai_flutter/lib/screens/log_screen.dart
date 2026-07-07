@@ -149,7 +149,10 @@ class _SummaryCard extends StatelessWidget {
           const Divider(color: kBorder, height: 1),
           _Row('Calories burned',   '${state.burned} kcal', kAccent),
           const Divider(color: kBorder, height: 1),
-          _Row('Net calories',      '${state.kcalLeft} kcal', kTextPrim),
+          _Row('Net calories',      '${state.netCalories} kcal', kTextPrim),
+          const Divider(color: kBorder, height: 1),
+          _Row('Remaining',         '${state.kcalLeft} kcal',
+              state.kcalLeft >= 0 ? kTextPrim : kAccent),
         ],
       ),
     );

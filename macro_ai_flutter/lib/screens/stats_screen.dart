@@ -124,6 +124,21 @@ class _WeightChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Guard: need at least 2 points to draw a chart.
+    if (data.length < 2) {
+      return Container(
+        height: 180,
+        decoration: BoxDecoration(
+          color: kBgCard,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: kBorder),
+        ),
+        child: const Center(
+          child: Text('Not enough data yet',
+              style: TextStyle(color: kTextSec, fontSize: 13)),
+        ),
+      );
+    }
     final spots = List.generate(data.length, (i) => FlSpot(i.toDouble(), data[i]));
     final labels = ['May 1', 'May 8', 'May 15', 'May 22', 'May 29', 'Today'];
 
@@ -219,7 +234,8 @@ class _NutrientRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pct = (current / target).clamp(0.0, 1.0).toDouble();
+    // Guard: avoid division by zero when target is 0.
+    final pct = target == 0 ? 0.0 : (current / target).clamp(0.0, 1.0).toDouble();
 
     return Column(
       children: [

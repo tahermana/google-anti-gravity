@@ -52,8 +52,12 @@ class _CalorieRingState extends State<CalorieRing>
             animation: _anim,
             builder: (_, __) => CustomPaint(
               painter: _RingPainter(
-                eatenPct:  (widget.eaten  / widget.goal).clamp(0.0, 1.0) * _anim.value,
-                burnedPct: (widget.burned / widget.goal).clamp(0.0, 1.0) * _anim.value,
+                eatenPct:  widget.goal > 0
+                    ? (widget.eaten  / widget.goal).clamp(0.0, 1.0) * _anim.value
+                    : 0.0,
+                burnedPct: widget.goal > 0
+                    ? (widget.burned / widget.goal).clamp(0.0, 1.0) * _anim.value
+                    : 0.0,
               ),
               child: Center(
                 child: Column(

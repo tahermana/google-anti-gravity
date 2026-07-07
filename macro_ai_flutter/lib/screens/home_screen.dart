@@ -95,21 +95,27 @@ class HomeScreen extends StatelessWidget {
                               label: 'PROTEIN',
                               value: '${state.proteinCurrent}g',
                               barColor: kProtein,
-                              progress: state.proteinCurrent / state.proteinTarget,
+                              progress: state.proteinTarget > 0
+                                  ? (state.proteinCurrent / state.proteinTarget).clamp(0.0, 1.0)
+                                  : 0.0,
                             )),
                             const SizedBox(width: 10),
                             Expanded(child: MacroCard(
                               label: 'CARBS',
                               value: '${state.carbsCurrent}g',
                               barColor: kCarbs,
-                              progress: state.carbsCurrent / state.carbsTarget,
+                              progress: state.carbsTarget > 0
+                                  ? (state.carbsCurrent / state.carbsTarget).clamp(0.0, 1.0)
+                                  : 0.0,
                             )),
                             const SizedBox(width: 10),
                             Expanded(child: MacroCard(
                               label: 'FAT',
                               value: '${state.fatCurrent}g',
                               barColor: kFat,
-                              progress: state.fatCurrent / state.fatTarget,
+                              progress: state.fatTarget > 0
+                                  ? (state.fatCurrent / state.fatTarget).clamp(0.0, 1.0)
+                                  : 0.0,
                             )),
                           ],
                         ),

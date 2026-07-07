@@ -47,6 +47,19 @@ class _AddMealSheetState extends State<_AddMealSheet> {
   void _submit() {
     final name = _nameCtrl.text.trim();
     if (name.isEmpty) return;
+
+    final kcal = int.tryParse(_kcalCtrl.text) ?? 0;
+    if (kcal <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter calories greater than 0'),
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
     final now = TimeOfDay.now();
     final hour = now.hourOfPeriod == 0 ? 12 : now.hourOfPeriod;
     final min  = now.minute.toString().padLeft(2, '0');
@@ -56,11 +69,11 @@ class _AddMealSheetState extends State<_AddMealSheet> {
       name:    name,
       type:    _type,
       time:    '$hour:$min $amPm',
-      kcal:    int.tryParse(_kcalCtrl.text) ?? 0,
+      kcal:    kcal.clamp(1, 9999),
       emoji:   _typeEmoji[_type] ?? '🍴',
-      protein: int.tryParse(_proteinCtrl.text) ?? 0,
-      carbs:   int.tryParse(_carbsCtrl.text) ?? 0,
-      fat:     int.tryParse(_fatCtrl.text) ?? 0,
+      protein: (int.tryParse(_proteinCtrl.text) ?? 0).clamp(0, 1000),
+      carbs:   (int.tryParse(_carbsCtrl.text)   ?? 0).clamp(0, 1000),
+      fat:     (int.tryParse(_fatCtrl.text)     ?? 0).clamp(0, 1000),
     ));
 
     Navigator.pop(context);

@@ -143,7 +143,15 @@ class WelcomeScreen extends StatelessWidget {
                     const Text('Already have an account? ',
                         style: TextStyle(fontSize: 14, color: kTextSec)),
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Sign in is not available in this prototype yet'),
+                            behavior: SnackBarBehavior.floating,
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                      },
                       child: const Text('Sign In',
                           style: TextStyle(
                               fontSize: 14,

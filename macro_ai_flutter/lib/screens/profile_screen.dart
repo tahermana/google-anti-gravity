@@ -112,7 +112,20 @@ class ProfileScreen extends StatelessWidget {
                       _ToggleRow(
                         label: 'Meal reminders',
                         value: state.remindersEnabled,
-                        onChanged: (_) => state.toggleReminders(),
+                        onChanged: (_) {
+                          state.toggleReminders();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                state.remindersEnabled
+                                    ? 'Meal reminders preference enabled'
+                                    : 'Meal reminders preference disabled',
+                              ),
+                              behavior: SnackBarBehavior.floating,
+                              duration: const Duration(seconds: 2),
+                            ),
+                          );
+                        },
                       ),
                       _ToggleRow(
                         label: 'AI suggestions',
@@ -121,8 +134,8 @@ class ProfileScreen extends StatelessWidget {
                       ),
                       _ToggleRow(
                         label: 'Dark mode',
-                        value: state.darkMode,
-                        onChanged: (_) => state.toggleDarkMode(),
+                        value: true,
+                        onChanged: null,
                       ),
                     ],
                   ),
@@ -199,7 +212,7 @@ class _ProfileField extends StatelessWidget {
 class _ToggleRow extends StatelessWidget {
   final String label;
   final bool value;
-  final ValueChanged<bool> onChanged;
+  final ValueChanged<bool>? onChanged;
   const _ToggleRow({required this.label, required this.value, required this.onChanged});
 
   @override

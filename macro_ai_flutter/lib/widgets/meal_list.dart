@@ -73,7 +73,7 @@ class _MealItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
-          onTap: () {},
+          onTap: () => _showMealDetails(context, meal),
           child: Padding(
             padding: const EdgeInsets.all(12),
             child: Row(
@@ -125,6 +125,94 @@ class _MealItem extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  void _showMealDetails(BuildContext context, Meal meal) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: kBgCard2,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => Padding(
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(meal.emoji, style: const TextStyle(fontSize: 34)),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        meal.name,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                          color: kTextPrim,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        '${meal.type} · ${meal.time}',
+                        style: const TextStyle(fontSize: 12, color: kTextSec),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 18),
+            Row(
+              children: [
+                Expanded(child: _DetailBox(value: '${meal.kcal}', label: 'kcal')),
+                const SizedBox(width: 8),
+                Expanded(child: _DetailBox(value: '${meal.protein}g', label: 'protein')),
+                const SizedBox(width: 8),
+                Expanded(child: _DetailBox(value: '${meal.carbs}g', label: 'carbs')),
+                const SizedBox(width: 8),
+                Expanded(child: _DetailBox(value: '${meal.fat}g', label: 'fat')),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DetailBox extends StatelessWidget {
+  final String value, label;
+  const _DetailBox({required this.value, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      decoration: BoxDecoration(
+        color: kBgCard3,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: kBorder),
+      ),
+      child: Column(
+        children: [
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w800,
+              color: kTextPrim,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(label, style: const TextStyle(fontSize: 10, color: kTextSec)),
+        ],
       ),
     );
   }

@@ -58,7 +58,10 @@ class _RootShellState extends State<_RootShell> {
   @override
   Widget build(BuildContext context) {
     final screens = [
-      HomeScreen(state: _state),
+      HomeScreen(
+        state: _state,
+        onOpenProfile: () => setState(() => _currentIndex = 4),
+      ),
       LogScreen(state: _state),
       ScanScreen(state: _state),
       StatsScreen(state: _state),

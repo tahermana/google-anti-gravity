@@ -10,13 +10,22 @@ import '../widgets/add_meal_sheet.dart';
 
 class HomeScreen extends StatelessWidget {
   final AppState state;
-  const HomeScreen({super.key, required this.state});
+  final VoidCallback? onOpenProfile;
+  const HomeScreen({super.key, required this.state, this.onOpenProfile});
 
   String get _greeting {
     final h = DateTime.now().hour;
     if (h < 12) return 'Good morning,';
     if (h < 18) return 'Good afternoon,';
     return 'Good evening,';
+  }
+
+  String get _aiTipMessage {
+    final remainingProtein = state.proteinTarget - state.proteinCurrent;
+    if (remainingProtein <= 0) {
+      return 'Protein target reached — keep the rest of your meals balanced today.';
+    }
+    return '${remainingProtein}g short on protein — add chicken or Greek yogurt to hit your goal.';
   }
 
   @override
@@ -49,7 +58,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   // Avatar
                   GestureDetector(
-                    onTap: () {},
+                    onTap: onOpenProfile,
                     child: Container(
                       width: 44, height: 44,
                       decoration: BoxDecoration(
@@ -134,9 +143,7 @@ class HomeScreen extends StatelessWidget {
                         const SizedBox(height: 12),
 
                         // AI tip
-                        AiTipCard(
-                          message: '${state.proteinTarget - state.proteinCurrent}g short on protein — add chicken or Greek yogurt to hit your goal.',
-                        ),
+                        if (state.aiEnabled) AiTipCard(message: _aiTipMessage),
 
                         // Meals header
                         Row(

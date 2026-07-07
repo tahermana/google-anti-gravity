@@ -124,7 +124,7 @@ class _ScanScreenState extends State<ScanScreen>
                             const Positioned(
                               bottom: 14, left: 0, right: 0,
                               child: Text(
-                                'Point camera at food or barcode',
+                                'Demo scanner preview',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(fontSize: 12, color: kTextSec),
                               ),
@@ -161,7 +161,7 @@ class _ScanScreenState extends State<ScanScreen>
                                 ? const SizedBox(width: 16, height: 16,
                                     child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                                 : const Icon(Icons.camera_alt, size: 16),
-                            label: Text(_scanning ? 'Scanning…' : 'Scan now'),
+                            label: Text(_scanning ? 'Scanning…' : 'Demo scan'),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: kAccent,
                               foregroundColor: Colors.white,

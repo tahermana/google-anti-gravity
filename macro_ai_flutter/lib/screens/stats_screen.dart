@@ -9,6 +9,17 @@ class StatsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final avgDailyCalories = state.weeklyCalories.isEmpty
+        ? 0
+        : (state.weeklyCalories.reduce((a, b) => a + b) /
+                state.weeklyCalories.length)
+            .round();
+    final calorieDelta = state.goal - avgDailyCalories;
+    final avgSub = calorieDelta >= 0
+        ? '$calorieDelta under goal'
+        : '${calorieDelta.abs()} over goal';
+    final streakDays = state.weeklyCalories.where((v) => v > 0).length;
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: SafeArea(
@@ -26,18 +37,18 @@ class StatsScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // ── Big stat cards ──────────────────────────────────────
-                    const Row(
+                    Row(
                       children: [
                         Expanded(child: _BigStatCard(
                           label: 'Avg. daily calories',
-                          value: '1,847',
-                          sub: '↓ 153 under goal',
+                          value: _formatNumber(avgDailyCalories),
+                          sub: avgSub,
                           accent: false,
                         )),
-                        SizedBox(width: 10),
+                        const SizedBox(width: 10),
                         Expanded(child: _BigStatCard(
                           label: 'Streak',
-                          value: '🔥 12',
+                          value: '🔥 $streakDays',
                           sub: 'days logged',
                           accent: true,
                         )),
@@ -78,6 +89,13 @@ class StatsScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  static String _formatNumber(int n) {
+    return n.toString().replaceAllMapped(
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (m) => '${m[1]},',
     );
   }
 }

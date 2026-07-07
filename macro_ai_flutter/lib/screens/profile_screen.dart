@@ -132,7 +132,7 @@ class ProfileScreen extends StatelessWidget {
                         value: state.aiEnabled,
                         onChanged: (_) => state.toggleAi(),
                       ),
-                      _ToggleRow(
+                      const _ToggleRow(
                         label: 'Dark mode',
                         value: true,
                         onChanged: null,

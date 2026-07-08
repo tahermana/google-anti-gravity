@@ -9,9 +9,9 @@ class ProfileScreen extends StatelessWidget {
   /// Format an integer with comma thousands-separator (e.g. 2400 → '2,400').
   static String _formatNumber(int n) {
     return n.toString().replaceAllMapped(
-      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-      (m) => '${m[1]},',
-    );
+          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+          (m) => '${m[1]},',
+        );
   }
 
   @override
@@ -40,34 +40,49 @@ class ProfileScreen extends StatelessWidget {
                           children: [
                             const SizedBox(height: 16),
                             Container(
-                              width: 80, height: 80,
+                              width: 80,
+                              height: 80,
                               decoration: BoxDecoration(
                                 color: kAccent,
                                 shape: BoxShape.circle,
                                 boxShadow: [
-                                  BoxShadow(color: kAccent.withOpacity(0.4), blurRadius: 20),
-                                  BoxShadow(color: kAccent.withOpacity(0.15), blurRadius: 40),
+                                  BoxShadow(
+                                      color: kAccent.withOpacity(0.4),
+                                      blurRadius: 20),
+                                  BoxShadow(
+                                      color: kAccent.withOpacity(0.15),
+                                      blurRadius: 40),
                                 ],
                               ),
                               child: const Center(
                                 child: Text('AM',
-                                  style: TextStyle(color: Colors.white, fontSize: 26,
-                                      fontWeight: FontWeight.w800)),
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 26,
+                                        fontWeight: FontWeight.w800)),
                               ),
                             ),
                             const SizedBox(height: 12),
                             const Text('Ahmed M.',
-                              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: kTextPrim)),
+                                style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w800,
+                                    color: kTextPrim)),
                             const SizedBox(height: 8),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 5),
                               decoration: BoxDecoration(
                                 color: kAccent.withOpacity(0.15),
                                 borderRadius: BorderRadius.circular(99),
-                                border: Border.all(color: kAccent.withOpacity(0.3)),
+                                border:
+                                    Border.all(color: kAccent.withOpacity(0.3)),
                               ),
                               child: Text('🎯 ${state.userGoal ?? 'Not set'}',
-                                style: const TextStyle(fontSize: 13, color: kAccent, fontWeight: FontWeight.w600)),
+                                  style: const TextStyle(
+                                      fontSize: 13,
+                                      color: kAccent,
+                                      fontWeight: FontWeight.w600)),
                             ),
                             const SizedBox(height: 20),
                           ],
@@ -77,19 +92,26 @@ class ProfileScreen extends StatelessWidget {
                       // ── Body stats row ───────────────────────────────────
                       Row(
                         children: [
-                          Expanded(child: _BodyStat(
-                            value: '${state.currentWeight.toStringAsFixed(state.currentWeight.truncateToDouble() == state.currentWeight ? 0 : 1)} kg',
+                          Expanded(
+                              child: _BodyStat(
+                            value:
+                                '${state.currentWeight.toStringAsFixed(state.currentWeight.truncateToDouble() == state.currentWeight ? 0 : 1)} kg',
                             label: 'Weight',
                           )),
                           const SizedBox(width: 10),
-                          Expanded(child: _BodyStat(
+                          Expanded(
+                              child: _BodyStat(
                             value: '${state.height} cm',
                             label: 'Height',
                           )),
                           const SizedBox(width: 10),
-                          Expanded(child: _BodyStat(
+                          Expanded(
+                              child: _BodyStat(
                             value: state.height > 0
-                                ? (state.currentWeight / ((state.height / 100) * (state.height / 100))).toStringAsFixed(1)
+                                ? (state.currentWeight /
+                                        ((state.height / 100) *
+                                            (state.height / 100)))
+                                    .toStringAsFixed(1)
                                 : '--',
                             label: 'BMI',
                           )),
@@ -100,10 +122,14 @@ class ProfileScreen extends StatelessWidget {
                       // ── Daily Targets ─────────────────────────────────────
                       const _SectionTitle('DAILY TARGETS'),
                       const SizedBox(height: 10),
-                      _ProfileField(label: 'Calorie Goal', value: '${_formatNumber(state.goal)} kcal'),
-                      _ProfileField(label: 'Protein',      value: '${state.proteinTarget}g'),
-                      _ProfileField(label: 'Carbs',        value: '${state.carbsTarget}g'),
-                      _ProfileField(label: 'Fat',          value: '${state.fatTarget}g'),
+                      _ProfileField(
+                          label: 'Calorie Goal',
+                          value: '${_formatNumber(state.goal)} kcal'),
+                      _ProfileField(
+                          label: 'Protein', value: '${state.proteinTarget}g'),
+                      _ProfileField(
+                          label: 'Carbs', value: '${state.carbsTarget}g'),
+                      _ProfileField(label: 'Fat', value: '${state.fatTarget}g'),
                       const SizedBox(height: 20),
 
                       // ── Settings ──────────────────────────────────────────
@@ -175,7 +201,9 @@ class _BodyStat extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Text(value, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: kTextPrim)),
+          Text(value,
+              style: const TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.w800, color: kTextPrim)),
           const SizedBox(height: 2),
           Text(label, style: const TextStyle(fontSize: 11, color: kTextSec)),
         ],
@@ -202,7 +230,9 @@ class _ProfileField extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label, style: const TextStyle(fontSize: 14, color: kTextSec)),
-          Text(value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: kTextPrim)),
+          Text(value,
+              style: const TextStyle(
+                  fontSize: 14, fontWeight: FontWeight.w700, color: kTextPrim)),
         ],
       ),
     );
@@ -213,7 +243,8 @@ class _ToggleRow extends StatelessWidget {
   final String label;
   final bool value;
   final ValueChanged<bool>? onChanged;
-  const _ToggleRow({required this.label, required this.value, required this.onChanged});
+  const _ToggleRow(
+      {required this.label, required this.value, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {

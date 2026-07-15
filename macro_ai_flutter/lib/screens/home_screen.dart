@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/app_state.dart';
+import '../services/supabase_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/calorie_ring.dart';
 import '../widgets/macro_card.dart';
@@ -46,11 +47,16 @@ class HomeScreen extends StatelessWidget {
                       children: [
                         Text(_greeting, style: kStyleGreeting),
                         const SizedBox(height: 2),
-                        const Row(
+                        Row(
                           children: [
-                            Text('Ahmed', style: kStyleUserName),
-                            SizedBox(width: 6),
-                            _WaveEmoji(),
+                            Text(
+                              SupabaseService.currentUser != null
+                                  ? SupabaseService.displayName.split(' ').first
+                                  : 'User',
+                              style: kStyleUserName,
+                            ),
+                            const SizedBox(width: 6),
+                            const _WaveEmoji(),
                           ],
                         ),
                       ],
@@ -66,9 +72,12 @@ class HomeScreen extends StatelessWidget {
                         shape: BoxShape.circle,
                         boxShadow: [BoxShadow(color: kAccent.withOpacity(0.35), blurRadius: 10)],
                       ),
-                      child: const Center(
-                        child: Text('AM',
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 14)),
+                      child: Center(
+                        child: Text(
+                          SupabaseService.currentUser != null
+                              ? SupabaseService.initials
+                              : 'AM',
+                          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 14)),
                       ),
                     ),
                   ),

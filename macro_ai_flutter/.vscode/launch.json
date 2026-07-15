@@ -1,0 +1,19 @@
+﻿{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "MacroAI (Supabase)",
+      "request": "launch",
+      "type": "dart",
+      "args": [
+        "--dart-define=SUPABASE_URL=https://mblccznhkcxeiltsnekg.supabase.co",
+        "--dart-define=SUPABASE_PUBLISHABLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ibGNjem5oa2N4ZWlsdHNuZWtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5NTc5NzUsImV4cCI6MjA5OTUzMzk3NX0.ZYpppJCQ-eRSOzxb_OBQY8uwxeDCGAijPM-0WYKEbpk"
+      ]
+    },
+    {
+      "name": "MacroAI (Preview — no auth)",
+      "request": "launch",
+      "type": "dart"
+    }
+  ]
+}

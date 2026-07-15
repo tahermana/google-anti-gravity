@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../models/app_state.dart';
+import '../services/supabase_service.dart';
 import '../theme/app_theme.dart';
+import 'welcome_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   final AppState state;
@@ -54,20 +56,26 @@ class ProfileScreen extends StatelessWidget {
                                       blurRadius: 40),
                                 ],
                               ),
-                              child: const Center(
-                                child: Text('AM',
-                                    style: TextStyle(
+                              child: Center(
+                                child: Text(
+                                    SupabaseService.currentUser != null
+                                        ? SupabaseService.initials
+                                        : 'AM',
+                                    style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 26,
                                         fontWeight: FontWeight.w800)),
                               ),
                             ),
                             const SizedBox(height: 12),
-                            const Text('Ahmed M.',
-                                style: TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.w800,
-                                    color: kTextPrim)),
+                            Text(
+                              SupabaseService.currentUser != null
+                                  ? SupabaseService.displayName
+                                  : 'Ahmed M.',
+                              style: const TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w800,
+                                  color: kTextPrim)),
                             const SizedBox(height: 8),
                             Container(
                               padding: const EdgeInsets.symmetric(
@@ -163,6 +171,39 @@ class ProfileScreen extends StatelessWidget {
                         value: true,
                         onChanged: null,
                       ),
+                      if (SupabaseService.currentUser != null) ...[
+                        const SizedBox(height: 12),
+                        GestureDetector(
+                          onTap: () async {
+                            await SupabaseService.signOut();
+                            if (!context.mounted) return;
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                builder: (_) => const WelcomeScreen(),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            decoration: BoxDecoration(
+                              color: kBgCard,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: kBorder),
+                            ),
+                            child: const Center(
+                              child: Text(
+                                'Sign out',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: kAccent,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),

@@ -17,12 +17,38 @@ class SupabaseService {
 
   static User? get currentUser => client?.auth.currentUser;
 
+  /// Best-effort display name: full_name from Google metadata → email prefix → 'User'.
+  static String get displayName {
+    final user = currentUser;
+    if (user == null) return 'User';
+    final meta = user.userMetadata;
+    final full = meta?['full_name'] as String?;
+    if (full != null && full.isNotEmpty) return full;
+    final name = meta?['name'] as String?;
+    if (name != null && name.isNotEmpty) return name;
+    final email = user.email ?? '';
+    final prefix = email.split('@').first;
+    if (prefix.isNotEmpty) {
+      return prefix[0].toUpperCase() + prefix.substring(1);
+    }
+    return 'User';
+  }
+
+  /// Two-letter initials derived from displayName.
+  static String get initials {
+    final parts = displayName.trim().split(RegExp(r'\s+'));
+    if (parts.length >= 2) {
+      return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+    }
+    return displayName.isNotEmpty ? displayName[0].toUpperCase() : 'U';
+  }
+
   static Future<void> initialize() async {
     if (!isConfigured) return;
 
     await Supabase.initialize(
       url: supabaseUrl,
-      publishableKey: supabasePublishableKey,
+      anonKey: supabasePublishableKey,
     );
   }
 
@@ -87,7 +113,26 @@ class SupabaseService {
     final user = currentUser;
     if (supabase == null || user == null) return;
 
+    final today = DateTime.now().toUtc().toIso8601String().split('T').first;
+
     await supabase.from('profiles').upsert(state.toProfileRow(user.id));
+    await supabase.from('daily_summaries').upsert({
+      'user_id': user.id,
+      'summary_on': today,
+      'calories': state.eaten,
+      'burned': state.burned,
+      'protein': state.proteinCurrent,
+      'carbs': state.carbsCurrent,
+      'fat': state.fatCurrent,
+      'water_liters': state.water,
+      'steps': state.steps,
+      'updated_at': DateTime.now().toUtc().toIso8601String(),
+    }, onConflict: 'user_id,summary_on');
+    await supabase.from('weight_entries').upsert({
+      'user_id': user.id,
+      'logged_on': today,
+      'weight_kg': state.currentWeight,
+    }, onConflict: 'user_id,logged_on');
   }
 
   static Future<void> saveMeal(Meal meal) async {

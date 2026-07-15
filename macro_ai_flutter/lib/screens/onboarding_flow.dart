@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../theme/app_theme.dart';
 import '../models/app_state.dart';
 import '../main.dart';
+import '../services/supabase_service.dart';
 
 /// Manages the multi-step onboarding and navigates to the main app when done.
 class OnboardingFlow extends StatefulWidget {
@@ -95,9 +98,11 @@ class _OnboardingFlowState extends State<OnboardingFlow>
         currentWeight: _currentWeight,
         height: _height,
       );
+      unawaited(SupabaseService.saveProfile(state));
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-            builder: (_) => MacroAiApp(showOnboarding: false, initialState: state)),
+            builder: (_) =>
+                MacroAiApp(showOnboarding: false, initialState: state)),
       );
     }
   }
@@ -437,14 +442,11 @@ class _OptionPill extends StatelessWidget {
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: isSelected
-                      ? Colors.white.withOpacity(0.15)
-                      : kBgCard2,
+                  color: isSelected ? Colors.white.withOpacity(0.15) : kBgCard2,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(icon,
-                    size: 18,
-                    color: isSelected ? Colors.white : kTextPrim),
+                    size: 18, color: isSelected ? Colors.white : kTextPrim),
               ),
               const SizedBox(width: 14),
             ],
@@ -537,8 +539,17 @@ class _DobStep extends StatelessWidget {
                 Expanded(
                   child: _ScrollPicker(
                     items: const [
-                      'January', 'February', 'March', 'April', 'May', 'June',
-                      'July', 'August', 'September', 'October', 'November',
+                      'January',
+                      'February',
+                      'March',
+                      'April',
+                      'May',
+                      'June',
+                      'July',
+                      'August',
+                      'September',
+                      'October',
+                      'November',
                       'December',
                     ],
                     selectedIndex: month,
@@ -689,7 +700,10 @@ class _MetricInput extends StatefulWidget {
   final String label, unit, initial;
   final ValueChanged<String>? onChanged;
   const _MetricInput(
-      {required this.label, required this.unit, required this.initial, this.onChanged});
+      {required this.label,
+      required this.unit,
+      required this.initial,
+      this.onChanged});
 
   @override
   State<_MetricInput> createState() => _MetricInputState();
@@ -730,12 +744,12 @@ class _MetricInputState extends State<_MetricInput> {
             child: TextField(
               controller: _ctrl,
               keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))
+              ],
               textAlign: TextAlign.right,
               style: const TextStyle(
-                  fontSize: 22,
-                  color: kTextPrim,
-                  fontWeight: FontWeight.w800),
+                  fontSize: 22, color: kTextPrim, fontWeight: FontWeight.w800),
               decoration: const InputDecoration(
                 border: InputBorder.none,
                 isDense: true,
@@ -831,8 +845,7 @@ class _SourceTile extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(icon,
-                size: 22, color: isSelected ? Colors.white : kTextPrim),
+            Icon(icon, size: 22, color: isSelected ? Colors.white : kTextPrim),
             const SizedBox(width: 14),
             Text(
               label,
@@ -874,8 +887,7 @@ class _GoalStep extends StatelessWidget {
           const SizedBox(height: 16),
           const Text('What is your goal?', style: kStyleOnboardTitle),
           const SizedBox(height: 8),
-          const Text(
-              'This helps us generate a plan for your\ncalorie intake.',
+          const Text('This helps us generate a plan for your\ncalorie intake.',
               style: kStyleOnboardSub),
           const Spacer(),
           for (final goal in _goals) ...[
@@ -909,7 +921,10 @@ class _ObstaclesStep extends StatelessWidget {
     {'icon': Icons.fastfood_rounded, 'label': 'Unhealthy eating habits'},
     {'icon': Icons.group_off_rounded, 'label': 'Lack of support'},
     {'icon': Icons.calendar_month_rounded, 'label': 'Busy schedule'},
-    {'icon': Icons.restaurant_menu_rounded, 'label': 'Lack of meal inspiration'},
+    {
+      'icon': Icons.restaurant_menu_rounded,
+      'label': 'Lack of meal inspiration'
+    },
   ];
 
   @override
@@ -994,9 +1009,7 @@ class _MultiSelectTile extends StatelessWidget {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: isSelected
-                    ? Colors.white.withOpacity(0.15)
-                    : kBgCard2,
+                color: isSelected ? Colors.white.withOpacity(0.15) : kBgCard2,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(icon,
@@ -1023,7 +1036,9 @@ class _MultiSelectTile extends StatelessWidget {
                   color: isSelected ? Colors.white : kTextMuted,
                   width: 2,
                 ),
-                color: isSelected ? Colors.white.withOpacity(0.2) : Colors.transparent,
+                color: isSelected
+                    ? Colors.white.withOpacity(0.2)
+                    : Colors.transparent,
               ),
               child: isSelected
                   ? const Icon(Icons.check_rounded,
@@ -1097,7 +1112,8 @@ class _DesiredWeightStepState extends State<_DesiredWeightStep> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 16),
-          const Text('What is your\ndesired weight?', style: kStyleOnboardTitle),
+          const Text('What is your\ndesired weight?',
+              style: kStyleOnboardTitle),
           const Spacer(),
 
           // Goal label
@@ -1342,9 +1358,7 @@ class _YesNoTile extends StatelessWidget {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: isSelected
-                    ? Colors.white.withOpacity(0.15)
-                    : kBgCard2,
+                color: isSelected ? Colors.white.withOpacity(0.15) : kBgCard2,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(

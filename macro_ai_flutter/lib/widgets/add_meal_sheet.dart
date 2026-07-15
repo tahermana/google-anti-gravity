@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/app_state.dart';
+import '../services/supabase_service.dart';
 import '../theme/app_theme.dart';
 
 /// Bottom sheet for logging a new meal.
@@ -25,20 +28,29 @@ class _AddMealSheet extends StatefulWidget {
 }
 
 class _AddMealSheetState extends State<_AddMealSheet> {
-  final _nameCtrl    = TextEditingController();
-  final _kcalCtrl    = TextEditingController();
+  final _nameCtrl = TextEditingController();
+  final _kcalCtrl = TextEditingController();
   final _proteinCtrl = TextEditingController();
-  final _carbsCtrl   = TextEditingController();
-  final _fatCtrl     = TextEditingController();
+  final _carbsCtrl = TextEditingController();
+  final _fatCtrl = TextEditingController();
   String _type = 'Breakfast';
 
   static const _typeEmoji = {
-    'Breakfast': '🍳', 'Lunch': '🥙', 'Dinner': '🍽️', 'Snack': '🍎',
+    'Breakfast': '🍳',
+    'Lunch': '🥙',
+    'Dinner': '🍽️',
+    'Snack': '🍎',
   };
 
   @override
   void dispose() {
-    for (final c in [_nameCtrl, _kcalCtrl, _proteinCtrl, _carbsCtrl, _fatCtrl]) {
+    for (final c in [
+      _nameCtrl,
+      _kcalCtrl,
+      _proteinCtrl,
+      _carbsCtrl,
+      _fatCtrl
+    ]) {
       c.dispose();
     }
     super.dispose();
@@ -62,19 +74,23 @@ class _AddMealSheetState extends State<_AddMealSheet> {
 
     final now = TimeOfDay.now();
     final hour = now.hourOfPeriod == 0 ? 12 : now.hourOfPeriod;
-    final min  = now.minute.toString().padLeft(2, '0');
+    final min = now.minute.toString().padLeft(2, '0');
     final amPm = now.period == DayPeriod.am ? 'AM' : 'PM';
 
-    widget.state.addMeal(Meal(
-      name:    name,
-      type:    _type,
-      time:    '$hour:$min $amPm',
-      kcal:    kcal.clamp(1, 9999),
-      emoji:   _typeEmoji[_type] ?? '🍴',
+    final meal = Meal(
+      name: name,
+      type: _type,
+      time: '$hour:$min $amPm',
+      kcal: kcal.clamp(1, 9999),
+      emoji: _typeEmoji[_type] ?? '🍴',
       protein: (int.tryParse(_proteinCtrl.text) ?? 0).clamp(0, 1000),
-      carbs:   (int.tryParse(_carbsCtrl.text)   ?? 0).clamp(0, 1000),
-      fat:     (int.tryParse(_fatCtrl.text)     ?? 0).clamp(0, 1000),
-    ));
+      carbs: (int.tryParse(_carbsCtrl.text) ?? 0).clamp(0, 1000),
+      fat: (int.tryParse(_fatCtrl.text) ?? 0).clamp(0, 1000),
+    );
+
+    widget.state.addMeal(meal);
+    unawaited(SupabaseService.saveMeal(meal));
+    unawaited(SupabaseService.saveProfile(widget.state));
 
     Navigator.pop(context);
 
@@ -103,12 +119,17 @@ class _AddMealSheetState extends State<_AddMealSheet> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text('Log a Meal',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: kTextPrim)),
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: kTextPrim)),
               GestureDetector(
                 onTap: () => Navigator.pop(context),
                 child: Container(
-                  width: 32, height: 32,
-                  decoration: const BoxDecoration(color: kBgCard3, shape: BoxShape.circle),
+                  width: 32,
+                  height: 32,
+                  decoration: const BoxDecoration(
+                      color: kBgCard3, shape: BoxShape.circle),
                   child: const Icon(Icons.close, size: 16, color: kTextSec),
                 ),
               ),
@@ -117,15 +138,21 @@ class _AddMealSheetState extends State<_AddMealSheet> {
           const SizedBox(height: 20),
 
           // Name
-          _Input(controller: _nameCtrl, hint: 'Food name (e.g. Grilled chicken)'),
+          _Input(
+              controller: _nameCtrl, hint: 'Food name (e.g. Grilled chicken)'),
           const SizedBox(height: 10),
 
           // Kcal + Type row
           Row(
             children: [
-              Expanded(child: _Input(controller: _kcalCtrl, hint: 'Calories', numeric: true)),
+              Expanded(
+                  child: _Input(
+                      controller: _kcalCtrl, hint: 'Calories', numeric: true)),
               const SizedBox(width: 10),
-              Expanded(child: _TypeDropdown(value: _type, onChanged: (v) => setState(() => _type = v!))),
+              Expanded(
+                  child: _TypeDropdown(
+                      value: _type,
+                      onChanged: (v) => setState(() => _type = v!))),
             ],
           ),
           const SizedBox(height: 10),
@@ -133,11 +160,19 @@ class _AddMealSheetState extends State<_AddMealSheet> {
           // Macros row
           Row(
             children: [
-              Expanded(child: _Input(controller: _proteinCtrl, hint: 'Protein g', numeric: true)),
+              Expanded(
+                  child: _Input(
+                      controller: _proteinCtrl,
+                      hint: 'Protein g',
+                      numeric: true)),
               const SizedBox(width: 8),
-              Expanded(child: _Input(controller: _carbsCtrl, hint: 'Carbs g', numeric: true)),
+              Expanded(
+                  child: _Input(
+                      controller: _carbsCtrl, hint: 'Carbs g', numeric: true)),
               const SizedBox(width: 8),
-              Expanded(child: _Input(controller: _fatCtrl, hint: 'Fat g', numeric: true)),
+              Expanded(
+                  child: _Input(
+                      controller: _fatCtrl, hint: 'Fat g', numeric: true)),
             ],
           ),
           const SizedBox(height: 16),
@@ -151,10 +186,12 @@ class _AddMealSheetState extends State<_AddMealSheet> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: kAccent,
                 foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
                 elevation: 0,
               ),
-              child: const Text('Add Meal', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+              child: const Text('Add Meal',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
             ),
           ),
         ],
@@ -167,21 +204,24 @@ class _Input extends StatelessWidget {
   final TextEditingController controller;
   final String hint;
   final bool numeric;
-  const _Input({required this.controller, required this.hint, this.numeric = false});
+  const _Input(
+      {required this.controller, required this.hint, this.numeric = false});
 
   @override
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
       keyboardType: numeric ? TextInputType.number : TextInputType.text,
-      inputFormatters: numeric ? [FilteringTextInputFormatter.digitsOnly] : null,
+      inputFormatters:
+          numeric ? [FilteringTextInputFormatter.digitsOnly] : null,
       style: const TextStyle(color: kTextPrim, fontSize: 14),
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: const TextStyle(color: kTextMuted, fontSize: 13),
         filled: true,
         fillColor: kBgCard3,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         border: const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(8)),
           borderSide: BorderSide(color: kBorder),

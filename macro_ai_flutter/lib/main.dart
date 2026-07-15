@@ -33,7 +33,9 @@ class MacroAiApp extends StatelessWidget {
       title: 'Macro AI',
       debugShowCheckedModeBanner: false,
       theme: buildAppTheme(),
-      home: showOnboarding ? const SplashScreen() : _RootShell(initialState: initialState),
+      home: showOnboarding
+          ? const SplashScreen()
+          : _RootShell(initialState: initialState),
     );
   }
 }

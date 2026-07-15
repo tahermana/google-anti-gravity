@@ -56,7 +56,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       await SupabaseService.signInWithGoogle();
     } catch (_) {
       if (mounted) {
-        _showMessage('Google sign-in could not start. Check your Supabase setup.');
+        _showMessage(
+            'Google sign-in could not start. Check your Supabase setup.');
       }
     } finally {
       if (mounted) setState(() => _isSigningIn = false);
@@ -143,12 +144,14 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                                 ),
                               ),
                               child: const Center(
-                                child: Text('🍽️', style: TextStyle(fontSize: 64)),
+                                child:
+                                    Text('🍽️', style: TextStyle(fontSize: 64)),
                               ),
                             ),
                             const SizedBox(height: 20),
                             Container(
-                              margin: const EdgeInsets.symmetric(horizontal: 30),
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 30),
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 16,
                                 vertical: 10,

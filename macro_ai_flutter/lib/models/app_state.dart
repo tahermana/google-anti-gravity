@@ -21,10 +21,101 @@ class Meal {
     this.carbs = 0,
     this.fat = 0,
   });
+
+  factory Meal.fromSupabaseRow(Map<String, dynamic> row) {
+    return Meal(
+      name: row['name'] as String? ?? 'Meal',
+      type: row['meal_type'] as String? ?? 'Snack',
+      time: row['time_text'] as String? ?? '',
+      kcal: row['kcal'] as int? ?? 0,
+      emoji: row['emoji'] as String? ?? '🍴',
+      protein: row['protein'] as int? ?? 0,
+      carbs: row['carbs'] as int? ?? 0,
+      fat: row['fat'] as int? ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toSupabaseRow(String userId) {
+    return {
+      'user_id': userId,
+      'name': name,
+      'meal_type': type,
+      'time_text': time,
+      'kcal': kcal,
+      'emoji': emoji,
+      'protein': protein,
+      'carbs': carbs,
+      'fat': fat,
+    };
+  }
 }
 
 // ── App State ─────────────────────────────────────────────────────────────────
 class AppState extends ChangeNotifier {
+  AppState();
+
+  factory AppState.fromSupabase({
+    required Map<String, dynamic> profile,
+    required List<Map<String, dynamic>> meals,
+    required List<Map<String, dynamic>> weeklyCalories,
+    required List<Map<String, dynamic>> weightEntries,
+  }) {
+    final state = AppState()
+      ..goal = profile['goal'] as int? ?? 2000
+      ..eaten = profile['eaten'] as int? ?? 0
+      ..burned = profile['burned'] as int? ?? 0
+      ..proteinCurrent = profile['protein_current'] as int? ?? 0
+      ..proteinTarget = profile['protein_target'] as int? ?? 150
+      ..carbsCurrent = profile['carbs_current'] as int? ?? 0
+      ..carbsTarget = profile['carbs_target'] as int? ?? 200
+      ..fatCurrent = profile['fat_current'] as int? ?? 0
+      ..fatTarget = profile['fat_target'] as int? ?? 83
+      ..water = (profile['water_liters'] as num?)?.toDouble() ?? 0
+      ..steps = profile['steps'] as int? ?? 0
+      ..remindersEnabled =
+          profile['reminders_enabled'] as bool? ?? true
+      ..aiEnabled = profile['ai_enabled'] as bool? ?? true
+      ..darkMode = profile['dark_mode'] as bool? ?? true
+      ..userGoal = profile['user_goal'] as String?
+      ..obstacles = List<String>.from(profile['obstacles'] as List? ?? [])
+      ..desiredWeight =
+          (profile['desired_weight'] as num?)?.toDouble() ?? 70.0
+      ..hasTrainer = profile['has_trainer'] as bool?
+      ..workoutFrequency = profile['workout_frequency'] as String?
+      ..sex = profile['sex'] as String?
+      ..birthMonth = profile['birth_month'] as int? ?? 10
+      ..birthDay = profile['birth_day'] as int? ?? 16
+      ..birthYear = profile['birth_year'] as int? ?? 1999
+      ..source = profile['source'] as String?
+      ..currentWeight =
+          (profile['current_weight'] as num?)?.toDouble() ?? 78.0
+      ..height = profile['height_cm'] as int? ?? 175;
+
+    if (meals.isNotEmpty) {
+      state.meals
+        ..clear()
+        ..addAll(meals.map(Meal.fromSupabaseRow));
+    }
+
+    if (weeklyCalories.isNotEmpty) {
+      state.weeklyCalories
+        ..clear()
+        ..addAll(weeklyCalories.map(
+          (row) => (row['calories'] as num?)?.toDouble() ?? 0,
+        ));
+    }
+
+    if (weightEntries.isNotEmpty) {
+      state.weightData
+        ..clear()
+        ..addAll(weightEntries.map(
+          (row) => (row['weight_kg'] as num?)?.toDouble() ?? 0,
+        ));
+    }
+
+    return state;
+  }
+
   int goal    = 2000;
   int eaten   = 1160;
   int burned  = 320;
@@ -177,6 +268,39 @@ class AppState extends ChangeNotifier {
     carbsCurrent   += meal.carbs;
     fatCurrent     += meal.fat;
     notifyListeners();
+  }
+
+  Map<String, dynamic> toProfileRow(String userId) {
+    return {
+      'user_id': userId,
+      'goal': goal,
+      'eaten': eaten,
+      'burned': burned,
+      'protein_current': proteinCurrent,
+      'protein_target': proteinTarget,
+      'carbs_current': carbsCurrent,
+      'carbs_target': carbsTarget,
+      'fat_current': fatCurrent,
+      'fat_target': fatTarget,
+      'water_liters': water,
+      'steps': steps,
+      'reminders_enabled': remindersEnabled,
+      'ai_enabled': aiEnabled,
+      'dark_mode': darkMode,
+      'user_goal': userGoal,
+      'obstacles': obstacles,
+      'desired_weight': desiredWeight,
+      'has_trainer': hasTrainer,
+      'workout_frequency': workoutFrequency,
+      'sex': sex,
+      'birth_month': birthMonth,
+      'birth_day': birthDay,
+      'birth_year': birthYear,
+      'source': source,
+      'current_weight': currentWeight,
+      'height_cm': height,
+      'updated_at': DateTime.now().toUtc().toIso8601String(),
+    };
   }
 
   void toggleReminders() { remindersEnabled = !remindersEnabled; notifyListeners(); }

@@ -1,9 +1,100 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+
+import '../main.dart';
+import '../models/app_state.dart';
+import '../services/supabase_service.dart';
 import '../theme/app_theme.dart';
 import 'onboarding_flow.dart';
 
-class WelcomeScreen extends StatelessWidget {
+class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
+
+  @override
+  State<WelcomeScreen> createState() => _WelcomeScreenState();
+}
+
+class _WelcomeScreenState extends State<WelcomeScreen> {
+  StreamSubscription<dynamic>? _authSubscription;
+  bool _isSigningIn = false;
+  bool _isLoadingProfile = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final client = SupabaseService.client;
+    if (client == null) return;
+
+    _authSubscription = client.auth.onAuthStateChange.listen((_) {
+      if (SupabaseService.currentUser != null) {
+        _openSignedInApp();
+      }
+    });
+
+    if (SupabaseService.currentUser != null) {
+      Future.microtask(_openSignedInApp);
+    }
+  }
+
+  @override
+  void dispose() {
+    _authSubscription?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _signInWithGoogle() async {
+    if (!SupabaseService.isConfigured) {
+      _showMessage(
+        'Add SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY to enable Google sign-in.',
+      );
+      return;
+    }
+
+    setState(() => _isSigningIn = true);
+    try {
+      await SupabaseService.signInWithGoogle();
+    } catch (_) {
+      if (mounted) {
+        _showMessage('Google sign-in could not start. Check your Supabase setup.');
+      }
+    } finally {
+      if (mounted) setState(() => _isSigningIn = false);
+    }
+  }
+
+  Future<void> _openSignedInApp() async {
+    if (_isLoadingProfile) return;
+    _isLoadingProfile = true;
+
+    final AppState? state = await SupabaseService.loadStateForCurrentUser();
+    if (!mounted) return;
+
+    if (state == null) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const OnboardingFlow()),
+      );
+    } else {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => MacroAiApp(
+            showOnboarding: false,
+            initialState: state,
+          ),
+        ),
+      );
+    }
+  }
+
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,8 +109,6 @@ class WelcomeScreen extends StatelessWidget {
             child: Column(
               children: [
                 const Spacer(flex: 1),
-
-                // ── Phone mockup area ─────────────────────────────────────────
                 Container(
                   height: 380,
                   decoration: BoxDecoration(
@@ -43,7 +132,6 @@ class WelcomeScreen extends StatelessWidget {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            // Scan corners
                             Container(
                               width: 180,
                               height: 180,
@@ -55,17 +143,16 @@ class WelcomeScreen extends StatelessWidget {
                                 ),
                               ),
                               child: const Center(
-                                child: Text('🍽️',
-                                    style: TextStyle(fontSize: 64)),
+                                child: Text('🍽️', style: TextStyle(fontSize: 64)),
                               ),
                             ),
                             const SizedBox(height: 20),
-                            // Bottom bar
                             Container(
-                              margin:
-                                  const EdgeInsets.symmetric(horizontal: 30),
+                              margin: const EdgeInsets.symmetric(horizontal: 30),
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 10),
+                                horizontal: 16,
+                                vertical: 10,
+                              ),
                               decoration: BoxDecoration(
                                 color: kBgCard3,
                                 borderRadius: BorderRadius.circular(20),
@@ -77,11 +164,14 @@ class WelcomeScreen extends StatelessWidget {
                                   Icon(Icons.camera_alt,
                                       color: kTextSec, size: 16),
                                   SizedBox(width: 6),
-                                  Text('Scan Food',
-                                      style: TextStyle(
-                                          color: kTextSec,
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w500)),
+                                  Text(
+                                    'Scan Food',
+                                    style: TextStyle(
+                                      color: kTextSec,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -91,10 +181,7 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 const Spacer(flex: 1),
-
-                // ── Title ─────────────────────────────────────────────────────
                 const Text(
                   'Calorie tracking\nmade easy',
                   textAlign: TextAlign.center,
@@ -106,61 +193,85 @@ class WelcomeScreen extends StatelessWidget {
                     height: 1.15,
                   ),
                 ),
-
                 const SizedBox(height: 28),
-
-                // ── Get Started button ────────────────────────────────────────
                 SizedBox(
                   width: double.infinity,
                   height: 56,
                   child: ElevatedButton(
-                    onPressed: () => Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                          builder: (_) => const OnboardingFlow()),
-                    ),
+                    onPressed: _isSigningIn ? null : _signInWithGoogle,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: kAccent,
-                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.white,
+                      disabledBackgroundColor: kBgCard3,
+                      foregroundColor: const Color(0xFF202124),
+                      disabledForegroundColor: kTextMuted,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(28),
                       ),
                       elevation: 0,
                     ),
-                    child: const Text(
-                      'Get Started',
-                      style: TextStyle(
-                          fontSize: 17, fontWeight: FontWeight.w700),
+                    child: _isSigningIn
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'G',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                              SizedBox(width: 10),
+                              Text(
+                                'Continue with Google',
+                                style: TextStyle(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (_) => const OnboardingFlow()),
+                  ),
+                  child: const Text(
+                    'Preview without signing in',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: kTextSec,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
-
-                const SizedBox(height: 16),
-
-                // ── Sign in link ──────────────────────────────────────────────
+                const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('Already have an account? ',
-                        style: TextStyle(fontSize: 14, color: kTextSec)),
+                    const Text(
+                      'Already have an account? ',
+                      style: TextStyle(fontSize: 14, color: kTextSec),
+                    ),
                     GestureDetector(
-                      onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Sign in is not available in this prototype yet'),
-                            behavior: SnackBarBehavior.floating,
-                            duration: Duration(seconds: 2),
-                          ),
-                        );
-                      },
-                      child: const Text('Sign In',
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: kTextPrim,
-                              fontWeight: FontWeight.w700)),
+                      onTap: _isSigningIn ? null : _signInWithGoogle,
+                      child: const Text(
+                        'Sign In',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: kTextPrim,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                     ),
                   ],
                 ),
-
                 SizedBox(height: bottom + 16),
               ],
             ),

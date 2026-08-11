@@ -43,25 +43,7 @@ class SupabaseService {
     return displayName.isNotEmpty ? displayName[0].toUpperCase() : 'U';
   }
 
-  static void assertSafeForClient() {
-    const forbiddenValues = [
-      String.fromEnvironment('SUPABASE_SERVICE_ROLE_KEY'),
-      String.fromEnvironment('DATABASE_PASSWORD'),
-      String.fromEnvironment('DIRECT_DATABASE_URL'),
-      String.fromEnvironment('JWT_SECRET'),
-    ];
-
-    final leakedSecret =
-        forbiddenValues.any((value) => value.trim().isNotEmpty);
-    if (leakedSecret) {
-      throw StateError(
-        'Secret Supabase/database values must never be included in the Flutter client.',
-      );
-    }
-  }
-
   static Future<void> initialize() async {
-    assertSafeForClient();
     if (!isConfigured) return;
 
     await Supabase.initialize(

@@ -49,10 +49,3 @@ key.properties
 
 # Pre-fix backup
 _backup_pre_fix_*/
-
-# Local secrets and environment files
-.env
-.env.*
-!.env.example
-*.pem
-*.p8
